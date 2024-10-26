@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ translate_text("Climate Application", session.get('language', 'tr')) }}</title>
+    <link rel="stylesheet" href="styles.css"> <!-- External CSS file -->
+    <style>
+        /* Global Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #e0f7fa 0%, #e0ece4 100%);
+            color: #2e3d49;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%;
+            background-color: #2e3d49; /* Navbar color */
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: #e0f7fa; /* Light text color */
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #80cbc4; /* Light color on hover */
+        }
+
+        .navbar select {
+            padding: 8px 12px;
+            border: none;
+            background-color: #344955; /* Dark background for select */
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Main Container */
+        .container {
+            margin: 80px 20px 20px; /* Adjust margin for navbar */
+            padding: 40px; /* Increased padding for better spacing */
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            flex: 1; /* Allow the container to grow */
+            overflow-y: auto;
+            max-width: 1000px; /* Adjust max width for the container */
+            margin-left: auto;
+            margin-right: auto; /* Center the container */
+        }
+
+        h1 {
+            font-weight: 500;
+            color: #344955;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Search Bar Styling */
+        .search-bar {
+            display: flex;
+            align-items: center; /* Align items vertically centered */
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 70%;
+            padding: 12px;
+            border: 1px solid #b0bec5;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-right: 10px; /* Space between input and button */
+        }
+
+        .search-bar input:focus {
+            border-color: #80cbc4;
+            outline: none;
+        }
+
+        .search-bar button {
+            padding: 12px 20px; /* Increased padding for buttons */
+            background-color: #4caf50; /* Green button background */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-right: 10px; /* Add margin to prevent touching */
+        }
+
+        .search-bar button:hover {
+            background-color: #388e3c; /* Darker green on hover */
+            transform: translateY(-2px); /* Slight lift effect on hover */
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%; /* Full width of the page */
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px; /* Rounded corners for the table */
+            overflow: hidden; /* Ensures child elements respect border-radius */
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 15px; /* Increased padding for better spacing */
+            text-align: left;
+            transition: background-color 0.3s; /* Smooth transition for hover */
+        }
+
+        th {
+            background-color: #344955; /* Dark background for headers */
+            color: #e0f7fa; /* Light text color */
+            font-weight: 600; /* Bold header text */
+            text-transform: uppercase; /* Uppercase text for header */
+            font-size: 14px; /* Slightly larger font size */
+            border-bottom: 2px solid #80cbc4; /* Bottom border for modern look */
+        }
+
+        tbody tr {
+            background-color: #ffffff; /* White background for table rows */
+        }
+
+        tbody tr:hover {
+            background-color: #e0f7fa; /* Light blue on row hover */
+        }
+
+        /* Flash Message Styling */
+        .flash {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Voting Button Styling */
+        .vote-buttons {
+            display: flex;
+            justify-content: space-between; /* Space between buttons */
+        }
+
+        .vote-buttons button {
+            padding: 8px 12px; /* Padding for buttons */
+            background-color: #4caf50; /* Green button background */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 5px; /* Space between buttons */
+        }
+
+        .vote-buttons button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-bar {
+                flex-direction: column; /* Stack search bar items */
+            }
+
+            .search-bar input {
+                width: 100%; /* Full width on smaller screens */
+                margin-bottom: 10px; /* Space between input and button */
+            }
+
+            .search-bar button {
+                width: 100%; /* Full width for buttons */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div>
+        <a href="/app">{{ translate_text("Climate Application", session.get('language', 'tr')) }}</a>
+        <a href="/help">{{ translate_text("About", session.get('language', 'tr')) }}</a>
+        <a href="/">{{ translate_text("Add Data", session.get('language', 'tr')) }}</a>
+        <a href="/c">{{ translate_text("Climate Change", session.get('language', 'tr')) }}</a>
+        <a href="/ai">{{ translate_text("Ask AI", session.get('language', 'tr')) }}</a>
+        <a href="/login">{{ translate_text("Login", session.get('language', 'tr')) }}</a>
+        <a href="/register">{{ translate_text("Register", session.get('language', 'tr')) }}</a>
+    </div>
+    <select name="language" id="language" onchange="changeLanguage()">
+        <option value="en" {% if session.get('language') == 'en' %}selected{% endif %}>English</option>
+        <option value="tr" {% if session.get('language') == 'tr' %}selected{% endif %}>Türkçe</option>
+        <option value="de" {% if session.get('language') == 'de' %}selected{% endif %}>Deutsch</option>
+        <option value="fr" {% if session.get('language') == 'fr' %}selected{% endif %}>Français</option>
+    </select>
+</nav>
+
+<script>
+    function changeLanguage() {
+        const language = document.getElementById("language").value;
+        window.location.href = `/lang?language=${language}`;
+    }
+</script>
+
+<div class="container">
+    <h1>{{ translate_text("Climate Data", session.get('language', 'tr')) }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="search-bar">
+        <form method="GET" action="/app" style="display: flex; width: 100%;">
+            <input type="text" name="query" placeholder="{{ translate_text('Search Country or City...', session.get('language', 'tr')) }}">
+            <button type="submit">{{ translate_text('Find Data', session.get('language', 'tr')) }}</button>
+            <button type="submit" name="query" value="">{{ translate_text('Show All Records', session.get('language', 'tr')) }}</button>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>{{ translate_text("Country", session.get('language', 'tr')) }}</th>
+                <th>{{ translate_text("City", session.get('language', 'tr')) }}</th>
+                <th>{{ translate_text("Time", session.get('language', 'tr')) }}</th>
+                <th>{{ translate_text("Humidity", session.get('language', 'tr')) }}</th>
+                <th>{{ translate_text("Temperature", session.get('language', 'tr')) }}</th>
+                <th>{{ translate_text("CO2 Ratio", session.get('language', 'tr')) }}</th>
+                <th>{{ translate_text("Upvotes", session.get('language', 'tr')) }}</th>
+                <th>{{ translate_text("Downvotes", session.get('language', 'tr')) }}</th>
+                <th>{{ translate_text("Vote", session.get('language', 'tr')) }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if climate_data|length == 0 %}
+                <tr>
+                    <td colspan="9" style="text-align: center; font-weight: bold; color: #888;">{{ translate_text("No data available", session.get('language', 'tr')) }}</td>
+                </tr>
+            {% else %}
+                {% for row in climate_data %}
+                <tr>
+                    <td>{{ row.ulke }}</td>
+                    <td>{{ row.sehir }}</td>
+                    <td>{{ row.saat }}</td>
+                    <td>{{ row.nem }}</td>
+                    <td>{{ row.sicaklik_degeri }}</td>
+                    <td>{{ row.oran }}</td>
+                    <td>{{ row.upvotes }}</td>
+                    <td>{{ row.downvotes }}</td>
+                    <td class="vote-buttons">
+                        <form method="POST" action="{{ url_for('upvote', id=row.id) }}" style="display: inline;">
+                            <button type="submit">👍</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('downvote', id=row.id) }}" style="display: inline;">
+                            <button type="submit">👎</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

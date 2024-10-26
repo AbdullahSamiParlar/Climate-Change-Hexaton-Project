@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ translate_text("Help Page", language) }}</title>
+    <style>
+        /* Global Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #e0f7fa 0%, #e0ece4 100%);
+            color: #2e3d49;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center items horizontally */
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%;
+            background-color: #2e3d49; /* Dark navbar color */
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: #e0f7fa; /* Light text color */
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #80cbc4; /* Light color on hover */
+        }
+
+        .navbar select {
+            padding: 8px 12px;
+            border: none;
+            background-color: #344955; /* Dark background for select */
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Main Container */
+        .container {
+            width: 600px; /* Larger fixed width for square */
+            height: 600px; /* Larger fixed height for square */
+            margin: 80px auto; /* Center container with top margin for navbar */
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow-y: auto; /* Allow scrolling if content overflows */
+            display: flex; /* Flex display to align items */
+            flex-direction: column; /* Vertical alignment */
+            justify-content: space-between; /* Space items evenly */
+        }
+
+        h1 {
+            font-weight: 500;
+            color: #344955;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #343a40; /* Darker color for subheadings */
+            margin-top: 10px; /* Space above subheadings */
+        }
+
+        /* List Styling */
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0;
+            flex-grow: 1; /* Allow the list to grow and fill space */
+            overflow-y: auto; /* Scroll if necessary */
+        }
+
+        li {
+            margin: 5px 0;
+            padding: 10px;
+            background: #f0f4f8; /* Light background for list items */
+            border-radius: 5px;
+            transition: background 0.3s; /* Transition for hover effect */
+        }
+
+        li:hover {
+            background: #e1f5fe; /* Light blue on hover */
+        }
+
+        /* Contact Styling */
+        a.mailto {
+            color: #007bff; /* Blue link color */
+            text-decoration: none;
+        }
+
+        a.mailto:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div>
+        <a href="/app">{{ translate_text("Climate Application", session.get('language', 'tr')) }}</a>
+        <a href="/help">{{ translate_text("About", session.get('language', 'tr')) }}</a>
+        <a href="/">{{ translate_text("Add Data", session.get('language', 'tr')) }}</a>
+        <a href="/c">{{ translate_text("Climate Change", session.get('language', 'tr')) }}</a>
+        
+        <a href="/ai">{{ translate_text("Ask AI", session.get('language', 'tr')) }}</a>
+
+        <a href="/login">{{ translate_text("Login", session.get('language', 'tr')) }}</a>
+        <a href="/register">{{ translate_text("Register", session.get('language', 'tr')) }}</a>
+    </div>
+    
+    <!-- Language Dropdown -->
+    <select name="language" id="language" onchange="changeLanguage()">
+        <option value="en" {% if session.get('language') == 'en' %}selected{% endif %}>English</option>
+        <option value="tr" {% if session.get('language') == 'tr' %}selected{% endif %}>Türkçe</option>
+        <option value="de" {% if session.get('language') == 'de' %}selected{% endif %}>Deutsch</option>
+        <option value="fr" {% if session.get('language') == 'fr' %}selected{% endif %}>Français</option>
+    </select>
+</nav>
+
+<script>
+    function changeLanguage() {
+        const language = document.getElementById("language").value;
+        window.location.href = `/lang?language=${language}`;
+    }
+</script>
+
+<div class="container">
+    <h1>{{ translate_text("Help Page", language) }}</h1>
+    <p>{{ translate_text("You can find information about the application on this page.", language) }}</p>
+    <h2>{{ translate_text("Application Features", language) }}</h2>
+    <ul>
+        <li>{{ translate_text("Adding and viewing climate data.", language) }}</li>
+        <li>{{ translate_text("Options to delete and update data.", language) }}</li>
+        <li>{{ translate_text("Help page.", language) }}</li>
+    </ul>
+    <h2>{{ translate_text("Contact", language) }}</h2>
+</br>
+    <p>{{ translate_text("Please contact us for any issues or suggestions.", language) }}</p>
+</br>
+    <p><a class="mailto" href="mailto:parlarabdullahsami@email.com">parlarabdullahsami@email.com</a></p>
+</div>
+
+</body>
+</html>

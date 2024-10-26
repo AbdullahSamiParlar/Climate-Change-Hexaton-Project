@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ translate_text("Climate Change Page", session.get('language', 'tr')) }}</title>
+    <style>
+        /* Global Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #e0f7fa 0%, #e0ece4 100%);
+            color: #2e3d49;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center items horizontally */
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%;
+            background-color: #2e3d49; /* Dark navbar color */
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: #e0f7fa; /* Light text color */
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #80cbc4; /* Light color on hover */
+        }
+
+        .navbar select {
+            padding: 8px 12px;
+            border: none;
+            background-color: #344955; /* Dark background for select */
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Main Container */
+        .container {
+            width: 90%; /* Responsive width */
+            max-width: 800px; /* Maximum width for larger screens */
+            margin: 80px auto; /* Center container with top margin for navbar */
+            padding: 30px; /* Increased padding for better spacing */
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow-y: auto; /* Allow scrolling if content overflows */
+            flex: 1; /* Allow the container to grow */
+        }
+
+        h1 {
+            font-weight: 500;
+            color: #007bff; /* Blue heading color */
+            margin-bottom: 20px; /* Space below heading */
+            text-align: center; /* Center the main heading */
+        }
+
+        h2 {
+            color: #343a40; /* Darker color for subheadings */
+            margin-top: 20px; /* Space above subheadings */
+        }
+
+        /* List Styling */
+        ul {
+            list-style-type: none; /* Remove default list styling */
+            padding: 0; /* Remove default padding */
+            margin: 10px 0; /* Margin for the list */
+        }
+
+        li {
+            margin: 5px 0; /* Space between list items */
+            padding: 10px;
+            background: #f0f4f8; /* Light background for list items */
+            border-radius: 5px; /* Rounded corners */
+            transition: background 0.3s; /* Transition for hover effect */
+        }
+
+        li:hover {
+            background: #e1f5fe; /* Light blue on hover */
+        }
+
+        /* Contact Styling */
+        a.mailto {
+            color: #007bff; /* Blue link color */
+            text-decoration: none;
+        }
+
+        a.mailto:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div>
+        <a href="/app">{{ translate_text("Climate Application", session.get('language', 'tr')) }}</a>
+        <a href="/help">{{ translate_text("About", session.get('language', 'tr')) }}</a>
+        <a href="/">{{ translate_text("Add Data", session.get('language', 'tr')) }}</a>
+        <a href="/c">{{ translate_text("Climate Change", session.get('language', 'tr')) }}</a>
+        
+        <a href="/ai">{{ translate_text("Ask AI", session.get('language', 'tr')) }}</a>
+        <a href="/login">{{ translate_text("Login", session.get('language', 'tr')) }}</a>
+        <a href="/register">{{ translate_text("Register", session.get('language', 'tr')) }}</a>
+    </div>
+    
+    <!-- Language Dropdown -->
+    <select name="language" id="language" onchange="changeLanguage()">
+        <option value="en" {% if session.get('language') == 'en' %}selected{% endif %}>English</option>
+        <option value="tr" {% if session.get('language') == 'tr' %}selected{% endif %}>Türkçe</option>
+        <option value="de" {% if session.get('language') == 'de' %}selected{% endif %}>Deutsch</option>
+        <option value="fr" {% if session.get('language') == 'fr' %}selected{% endif %}>Français</option>
+    </select>
+</nav>
+
+<script>
+    function changeLanguage() {
+        const language = document.getElementById("language").value;
+        window.location.href = `/lang?language=${language}`;
+    }
+</script>
+
+<div class="container">
+    <h1>{{ translate_text("İklim Değişikliği", language) }}</h1>
+    <p>{{ translate_text("İklim değişikliği, dünya genelinde çevresel değişiklikler yaratan bir fenomendir. Bu sayfada iklim değişikliğinin nedenleri, etkileri ve mücadele yöntemleri hakkında bilgi bulabilirsiniz.", language) }}</p>
+    
+    <h2>{{ translate_text("Nedenler", language) }}</h2>
+    <ul>
+        <li>{{ translate_text("Fosil yakıtların yakılması.", language) }}</li>
+        <li>{{ translate_text("Ağaç kesimi ve tarım uygulamaları.", language) }}</li>
+        <li>{{ translate_text("Endüstriyel faaliyetler.", language) }}</li>
+    </ul>
+    
+    <h2>{{ translate_text("Etkenler", language) }}</h2>
+    <ul>
+        <li>{{ translate_text("Deniz seviyesinin yükselmesi.", language) }}</li>
+        <li>{{ translate_text("Artan sıcaklıklar ve hava olayları.", language) }}</li>
+        <li>{{ translate_text("Biyolojik çeşitliliğin azalması.", language) }}</li>
+    </ul>
+
+    <h2>{{ translate_text("Nasıl Mücadele Edebiliriz?", language) }}</h2>
+    <ul>
+        <li>{{ translate_text("Yenilenebilir enerji kaynaklarına geçiş.", language) }}</li>
+        <li>{{ translate_text("Enerji tasarrufu ve verimliliği artırma.", language) }}</li>
+        <li>{{ translate_text("Toplumda farkındalık yaratma.", language) }}</li>
+    </ul>
+
+    <h2>{{ translate_text("İletişim", language) }}</h2>
+</br>
+    <p>{{ translate_text("Herhangi bir sorun veya öneri için bizimle iletişime geçin.", language) }}</p>
+</br>
+    <p><a class="mailto" href="mailto:parlarabdullahsami@email.com">parlarabdullahsami@email.com</a></p>
+</div>
+
+</body>
+</html>

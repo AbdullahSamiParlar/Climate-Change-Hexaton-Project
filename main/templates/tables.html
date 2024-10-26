@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ translate_text("Climate Data", session.get('language', 'tr')) }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* Global Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #e0f7fa 0%, #e0ece4 100%);
+            color: #2e3d49;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%;
+            background-color: #2e3d49;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: #e0f7fa;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #80cbc4;
+        }
+
+        .navbar select {
+            padding: 8px 12px;
+            border: none;
+            background-color: #344955;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Main Container */
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 120px;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-weight: 500;
+            color: #344955;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styling */
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        form select, 
+        form input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #b0bec5;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        form select:focus, 
+        form input:focus {
+            border-color: #80cbc4;
+            outline: none;
+        }
+
+        form button {
+            grid-column: span 2;
+            padding: 12px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #388e3c;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #cfd8dc;
+        }
+
+        th {
+            background-color: #e0f2f1;
+            color: #2e3d49;
+            font-weight: 600;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f8e9;
+        }
+
+        /* Flash Message */
+        .flash {
+            margin-bottom: 15px;
+            color: #d32f2f;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div>
+            <a href="/app">{{ translate_text("Climate Application", session.get('language', 'tr')) }}</a>
+            <a href="/help">{{ translate_text("About", session.get('language', 'tr')) }}</a>
+            <a href="/">{{ translate_text("Add Data", session.get('language', 'tr')) }}</a>
+            <a href="/c">{{ translate_text("Climate Change", session.get('language', 'tr')) }}</a>
+            
+            <a href="/ai">{{ translate_text("Ask AI", session.get('language', 'tr')) }}</a>
+
+            <a href="/login">{{ translate_text("Login", session.get('language', 'tr')) }}</a>
+            <a href="/register">{{ translate_text("Register", session.get('language', 'tr')) }}</a>
+        </div>
+        <select name="language" id="language" onchange="changeLanguage()">
+            <option value="en" {% if session.get('language') == 'en' %}selected{% endif %}>English</option>
+            <option value="tr" {% if session.get('language') == 'tr' %}selected{% endif %}>Türkçe</option>
+            <option value="de" {% if session.get('language') == 'de' %}selected{% endif %}>Deutsch</option>
+            <option value="fr" {% if session.get('language') == 'fr' %}selected{% endif %}>Français</option>
+        </select>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1>{{ translate_text("Climate Data", session.get('language', 'tr')) }}</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="flash {{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Data Entry Form -->
+        <form action="/add" method="POST">
+            <select name="country" required>
+                <option value="">{{ translate_text('Select Country', session.get('language', 'tr')) }}</option>
+                <option value="AF">{{ translate_text("Afghanistan", session.get('language', 'tr')) }}</option>
+                <option value="AL">{{ translate_text("Albania", session.get('language', 'tr')) }}</option>
+                <option value="DZ">{{ translate_text("Algeria", session.get('language', 'tr')) }}</option>
+                <option value="AD">{{ translate_text("Andorra", session.get('language', 'tr')) }}</option>
+                <option value="AO">{{ translate_text("Angola", session.get('language', 'tr')) }}</option>
+                <option value="AG">{{ translate_text("Antigua and Barbuda", session.get('language', 'tr')) }}</option>
+                <option value="AR">{{ translate_text("Argentina", session.get('language', 'tr')) }}</option>
+                <option value="AM">{{ translate_text("Armenia", session.get('language', 'tr')) }}</option>
+                <option value="AU">{{ translate_text("Australia", session.get('language', 'tr')) }}</option>
+                <option value="AT">{{ translate_text("Austria", session.get('language', 'tr')) }}</option>
+                <option value="AZ">{{ translate_text("Azerbaijan", session.get('language', 'tr')) }}</option>
+                <option value="BS">{{ translate_text("Bahamas", session.get('language', 'tr')) }}</option>
+                <option value="BH">{{ translate_text("Bahrain", session.get('language', 'tr')) }}</option>
+                <option value="BD">{{ translate_text("Bangladesh", session.get('language', 'tr')) }}</option>
+                <option value="BB">{{ translate_text("Barbados", session.get('language', 'tr')) }}</option>
+                <option value="BY">{{ translate_text("Belarus", session.get('language', 'tr')) }}</option>
+                <option value="BE">{{ translate_text("Belgium", session.get('language', 'tr')) }}</option>
+                <option value="BZ">{{ translate_text("Belize", session.get('language', 'tr')) }}</option>
+                <option value="BJ">{{ translate_text("Benin", session.get('language', 'tr')) }}</option>
+                <option value="BT">{{ translate_text("Bhutan", session.get('language', 'tr')) }}</option>
+                <option value="BO">{{ translate_text("Bolivia", session.get('language', 'tr')) }}</option>
+                <option value="BA">{{ translate_text("Bosnia and Herzegovina", session.get('language', 'tr')) }}</option>
+                <option value="BW">{{ translate_text("Botswana", session.get('language', 'tr')) }}</option>
+                <option value="BR">{{ translate_text("Brazil", session.get('language', 'tr')) }}</option>
+                <option value="BN">{{ translate_text("Brunei", session.get('language', 'tr')) }}</option>
+                <option value="BG">{{ translate_text("Bulgaria", session.get('language', 'tr')) }}</option>
+                <option value="BF">{{ translate_text("Burkina Faso", session.get('language', 'tr')) }}</option>
+                <option value="BI">{{ translate_text("Burundi", session.get('language', 'tr')) }}</option>
+                <option value="CV">{{ translate_text("Cabo Verde", session.get('language', 'tr')) }}</option>
+                <option value="KH">{{ translate_text("Cambodia", session.get('language', 'tr')) }}</option>
+                <option value="CM">{{ translate_text("Cameroon", session.get('language', 'tr')) }}</option>
+                <option value="CA">{{ translate_text("Canada", session.get('language', 'tr')) }}</option>
+                <option value="CF">{{ translate_text("Central African Republic", session.get('language', 'tr')) }}</option>
+                <option value="TD">{{ translate_text("Chad", session.get('language', 'tr')) }}</option>
+                <option value="CL">{{ translate_text("Chile", session.get('language', 'tr')) }}</option>
+                <option value="CN">{{ translate_text("China", session.get('language', 'tr')) }}</option>
+                <option value="CO">{{ translate_text("Colombia", session.get('language', 'tr')) }}</option>
+                <option value="KM">{{ translate_text("Comoros", session.get('language', 'tr')) }}</option>
+                <option value="CD">{{ translate_text("Congo, Democratic Republic of the", session.get('language', 'tr')) }}</option>
+                <option value="CG">{{ translate_text("Congo, Republic of the", session.get('language', 'tr')) }}</option>
+                <option value="CR">{{ translate_text("Costa Rica", session.get('language', 'tr')) }}</option>
+                <option value="HR">{{ translate_text("Croatia", session.get('language', 'tr')) }}</option>
+                <option value="CU">{{ translate_text("Cuba", session.get('language', 'tr')) }}</option>
+                <option value="CY">{{ translate_text("Cyprus", session.get('language', 'tr')) }}</option>
+                <option value="CZ">{{ translate_text("Czech Republic", session.get('language', 'tr')) }}</option>
+                <option value="DK">{{ translate_text("Denmark", session.get('language', 'tr')) }}</option>
+                <option value="DJ">{{ translate_text("Djibouti", session.get('language', 'tr')) }}</option>
+                <option value="DM">{{ translate_text("Dominica", session.get('language', 'tr')) }}</option>
+                <option value="DO">{{ translate_text("Dominican Republic", session.get('language', 'tr')) }}</option>
+                <option value="EC">{{ translate_text("Ecuador", session.get('language', 'tr')) }}</option>
+                <option value="EG">{{ translate_text("Egypt", session.get('language', 'tr')) }}</option>
+                <option value="SV">{{ translate_text("El Salvador", session.get('language', 'tr')) }}</option>
+                <option value="GQ">{{ translate_text("Equatorial Guinea", session.get('language', 'tr')) }}</option>
+                <option value="ER">{{ translate_text("Eritrea", session.get('language', 'tr')) }}</option>
+                <option value="EE">{{ translate_text("Estonia", session.get('language', 'tr')) }}</option>
+                <option value="SZ">{{ translate_text("Eswatini", session.get('language', 'tr')) }}</option>
+                <option value="ET">{{ translate_text("Ethiopia", session.get('language', 'tr')) }}</option>
+                <option value="FJ">{{ translate_text("Fiji", session.get('language', 'tr')) }}</option>
+                <option value="FI">{{ translate_text("Finland", session.get('language', 'tr')) }}</option>
+                <option value="FR">{{ translate_text("France", session.get('language', 'tr')) }}</option>
+                <option value="GA">{{ translate_text("Gabon", session.get('language', 'tr')) }}</option>
+                <option value="GM">{{ translate_text("Gambia", session.get('language', 'tr')) }}</option>
+                <option value="GE">{{ translate_text("Georgia", session.get('language', 'tr')) }}</option>
+                <option value="DE">{{ translate_text("Germany", session.get('language', 'tr')) }}</option>
+                <option value="GH">{{ translate_text("Ghana", session.get('language', 'tr')) }}</option>
+                <option value="GR">{{ translate_text("Greece", session.get('language', 'tr')) }}</option>
+                <option value="GD">{{ translate_text("Grenada", session.get('language', 'tr')) }}</option>
+                <option value="GT">{{ translate_text("Guatemala", session.get('language', 'tr')) }}</option>
+                <option value="GN">{{ translate_text("Guinea", session.get('language', 'tr')) }}</option>
+                <option value="GW">{{ translate_text("Guinea-Bissau", session.get('language', 'tr')) }}</option>
+                <option value="GY">{{ translate_text("Guyana", session.get('language', 'tr')) }}</option>
+                <option value="HT">{{ translate_text("Haiti", session.get('language', 'tr')) }}</option>
+                <option value="HN">{{ translate_text("Honduras", session.get('language', 'tr')) }}</option>
+                <option value="HU">{{ translate_text("Hungary", session.get('language', 'tr')) }}</option>
+                <option value="IS">{{ translate_text("Iceland", session.get('language', 'tr')) }}</option>
+                <option value="IN">{{ translate_text("India", session.get('language', 'tr')) }}</option>
+                <option value="ID">{{ translate_text("Indonesia", session.get('language', 'tr')) }}</option>
+                <option value="IR">{{ translate_text("Iran", session.get('language', 'tr')) }}</option>
+                <option value="IQ">{{ translate_text("Iraq", session.get('language', 'tr')) }}</option>
+                <option value="IE">{{ translate_text("Ireland", session.get('language', 'tr')) }}</option>
+                <option value="IL">{{ translate_text("Israel", session.get('language', 'tr')) }}</option>
+                <option value="IT">{{ translate_text("Italy", session.get('language', 'tr')) }}</option>
+                <option value="JM">{{ translate_text("Jamaica", session.get('language', 'tr')) }}</option>
+                <option value="JP">{{ translate_text("Japan", session.get('language', 'tr')) }}</option>
+                <option value="JO">{{ translate_text("Jordan", session.get('language', 'tr')) }}</option>
+                <option value="KZ">{{ translate_text("Kazakhstan", session.get('language', 'tr')) }}</option>
+                <option value="KE">{{ translate_text("Kenya", session.get('language', 'tr')) }}</option>
+                <option value="KI">{{ translate_text("Kiribati", session.get('language', 'tr')) }}</option>
+                <option value="KP">{{ translate_text("Korea, North", session.get('language', 'tr')) }}</option>
+                <option value="KR">{{ translate_text("Korea, South", session.get('language', 'tr')) }}</option>
+                <option value="KW">{{ translate_text("Kuwait", session.get('language', 'tr')) }}</option>
+                <option value="KG">{{ translate_text("Kyrgyzstan", session.get('language', 'tr')) }}</option>
+                <option value="LA">{{ translate_text("Laos", session.get('language', 'tr')) }}</option>
+                <option value="LV">{{ translate_text("Latvia", session.get('language', 'tr')) }}</option>
+                <option value="LB">{{ translate_text("Lebanon", session.get('language', 'tr')) }}</option>
+                <option value="LS">{{ translate_text("Lesotho", session.get('language', 'tr')) }}</option>
+                <option value="LR">{{ translate_text("Liberia", session.get('language', 'tr')) }}</option>
+                <option value="LY">{{ translate_text("Libya", session.get('language', 'tr')) }}</option>
+                <option value="LI">{{ translate_text("Liechtenstein", session.get('language', 'tr')) }}</option>
+                <option value="LT">{{ translate_text("Lithuania", session.get('language', 'tr')) }}</option>
+                <option value="LU">{{ translate_text("Luxembourg", session.get('language', 'tr')) }}</option>
+                <option value="MG">{{ translate_text("Madagascar", session.get('language', 'tr')) }}</option>
+                <option value="MW">{{ translate_text("Malawi", session.get('language', 'tr')) }}</option>
+                <option value="MY">{{ translate_text("Malaysia", session.get('language', 'tr')) }}</option>
+                <option value="MV">{{ translate_text("Maldives", session.get('language', 'tr')) }}</option>
+                <option value="ML">{{ translate_text("Mali", session.get('language', 'tr')) }}</option>
+                <option value="MT">{{ translate_text("Malta", session.get('language', 'tr')) }}</option>
+                <option value="MH">{{ translate_text("Marshall Islands", session.get('language', 'tr')) }}</option>
+                <option value="MR">{{ translate_text("Mauritania", session.get('language', 'tr')) }}</option>
+                <option value="MU">{{ translate_text("Mauritius", session.get('language', 'tr')) }}</option>
+                <option value="MX">{{ translate_text("Mexico", session.get('language', 'tr')) }}</option>
+                <option value="FM">{{ translate_text("Micronesia", session.get('language', 'tr')) }}</option>
+                <option value="MD">{{ translate_text("Moldova", session.get('language', 'tr')) }}</option>
+                <option value="MC">{{ translate_text("Monaco", session.get('language', 'tr')) }}</option>
+                <option value="MN">{{ translate_text("Mongolia", session.get('language', 'tr')) }}</option>
+                <option value="ME">{{ translate_text("Montenegro", session.get('language', 'tr')) }}</option>
+                <option value="MA">{{ translate_text("Morocco", session.get('language', 'tr')) }}</option>
+                <option value="MZ">{{ translate_text("Mozambique", session.get('language', 'tr')) }}</option>
+                <option value="MM">{{ translate_text("Myanmar", session.get('language', 'tr')) }}</option>
+                <option value="NA">{{ translate_text("Namibia", session.get('language', 'tr')) }}</option>
+                <option value="NR">{{ translate_text("Nauru", session.get('language', 'tr')) }}</option>
+                <option value="NP">{{ translate_text("Nepal", session.get('language', 'tr')) }}</option>
+                <option value="NL">{{ translate_text("Netherlands", session.get('language', 'tr')) }}</option>
+                <option value="NZ">{{ translate_text("New Zealand", session.get('language', 'tr')) }}</option>
+                <option value="NI">{{ translate_text("Nicaragua", session.get('language', 'tr')) }}</option>
+                <option value="NE">{{ translate_text("Niger", session.get('language', 'tr')) }}</option>
+                <option value="NG">{{ translate_text("Nigeria", session.get('language', 'tr')) }}</option>
+                <option value="MK">{{ translate_text("North Macedonia", session.get('language', 'tr')) }}</option>
+                <option value="NO">{{ translate_text("Norway", session.get('language', 'tr')) }}</option>
+                <option value="OM">{{ translate_text("Oman", session.get('language', 'tr')) }}</option>
+                <option value="PK">{{ translate_text("Pakistan", session.get('language', 'tr')) }}</option>
+                <option value="PW">{{ translate_text("Palau", session.get('language', 'tr')) }}</option>
+                <option value="PS">{{ translate_text("Palestine", session.get('language', 'tr')) }}</option>
+                <option value="PA">{{ translate_text("Panama", session.get('language', 'tr')) }}</option>
+                <option value="PG">{{ translate_text("Papua New Guinea", session.get('language', 'tr')) }}</option>
+                <option value="PY">{{ translate_text("Paraguay", session.get('language', 'tr')) }}</option>
+                <option value="PE">{{ translate_text("Peru", session.get('language', 'tr')) }}</option>
+                <option value="PH">{{ translate_text("Philippines", session.get('language', 'tr')) }}</option>
+                <option value="PL">{{ translate_text("Poland", session.get('language', 'tr')) }}</option>
+                <option value="PT">{{ translate_text("Portugal", session.get('language', 'tr')) }}</option>
+                <option value="QA">{{ translate_text("Qatar", session.get('language', 'tr')) }}</option>
+                <option value="RO">{{ translate_text("Romania", session.get('language', 'tr')) }}</option>
+                <option value="RU">{{ translate_text("Russia", session.get('language', 'tr')) }}</option>
+                <option value="RW">{{ translate_text("Rwanda", session.get('language', 'tr')) }}</option>
+                <option value="KN">{{ translate_text("Saint Kitts and Nevis", session.get('language', 'tr')) }}</option>
+                <option value="LC">{{ translate_text("Saint Lucia", session.get('language', 'tr')) }}</option>
+                <option value="VC">{{ translate_text("Saint Vincent and the Grenadines", session.get('language', 'tr')) }}</option>
+                <option value="WS">{{ translate_text("Samoa", session.get('language', 'tr')) }}</option>
+                <option value="SM">{{ translate_text("San Marino", session.get('language', 'tr')) }}</option>
+                <option value="ST">{{ translate_text("Sao Tome and Principe", session.get('language', 'tr')) }}</option>
+                <option value="SA">{{ translate_text("Saudi Arabia", session.get('language', 'tr')) }}</option>
+                <option value="SN">{{ translate_text("Senegal", session.get('language', 'tr')) }}</option>
+                <option value="RS">{{ translate_text("Serbia", session.get('language', 'tr')) }}</option>
+                <option value="SC">{{ translate_text("Seychelles", session.get('language', 'tr')) }}</option>
+                <option value="SL">{{ translate_text("Sierra Leone", session.get('language', 'tr')) }}</option>
+                <option value="SG">{{ translate_text("Singapore", session.get('language', 'tr')) }}</option>
+                <option value="SK">{{ translate_text("Slovakia", session.get('language', 'tr')) }}</option>
+                <option value="SI">{{ translate_text("Slovenia", session.get('language', 'tr')) }}</option>
+                <option value="SB">{{ translate_text("Solomon Islands", session.get('language', 'tr')) }}</option>
+                <option value="SO">{{ translate_text("Somalia", session.get('language', 'tr')) }}</option>
+                <option value="ZA">{{ translate_text("South Africa", session.get('language', 'tr')) }}</option>
+                <option value="SS">{{ translate_text("South Sudan", session.get('language', 'tr')) }}</option>
+                <option value="ES">{{ translate_text("Spain", session.get('language', 'tr')) }}</option>
+                <option value="LK">{{ translate_text("Sri Lanka", session.get('language', 'tr')) }}</option>
+                <option value="SD">{{ translate_text("Sudan", session.get('language', 'tr')) }}</option>
+                <option value="SR">{{ translate_text("Suriname", session.get('language', 'tr')) }}</option>
+                <option value="SE">{{ translate_text("Sweden", session.get('language', 'tr')) }}</option>
+                <option value="CH">{{ translate_text("Switzerland", session.get('language', 'tr')) }}</option>
+                <option value="SY">{{ translate_text("Syria", session.get('language', 'tr')) }}</option>
+                <option value="TW">{{ translate_text("Taiwan", session.get('language', 'tr')) }}</option>
+                <option value="TJ">{{ translate_text("Tajikistan", session.get('language', 'tr')) }}</option>
+                <option value="TZ">{{ translate_text("Tanzania", session.get('language', 'tr')) }}</option>
+                <option value="TH">{{ translate_text("Thailand", session.get('language', 'tr')) }}</option>
+                <option value="TL">{{ translate_text("Timor-Leste", session.get('language', 'tr')) }}</option>
+                <option value="TG">{{ translate_text("Togo", session.get('language', 'tr')) }}</option>
+                <option value="TO">{{ translate_text("Tonga", session.get('language', 'tr')) }}</option>
+                <option value="TT">{{ translate_text("Trinidad and Tobago", session.get('language', 'tr')) }}</option>
+                <option value="TN">{{ translate_text("Tunisia", session.get('language', 'tr')) }}</option>
+                <option value="TR">{{ translate_text("Turkey", session.get('language', 'tr')) }}</option>
+                <option value="TM">{{ translate_text("Turkmenistan", session.get('language', 'tr')) }}</option>
+                <option value="TV">{{ translate_text("Tuvalu", session.get('language', 'tr')) }}</option>
+                <option value="UG">{{ translate_text("Uganda", session.get('language', 'tr')) }}</option>
+                <option value="UA">{{ translate_text("Ukraine", session.get('language', 'tr')) }}</option>
+                <option value="AE">{{ translate_text("United Arab Emirates", session.get('language', 'tr')) }}</option>
+                <option value="GB">{{ translate_text("United Kingdom", session.get('language', 'tr')) }}</option>
+                <option value="US">{{ translate_text("United States", session.get('language', 'tr')) }}</option>
+                <option value="UY">{{ translate_text("Uruguay", session.get('language', 'tr')) }}</option>
+                <option value="UZ">{{ translate_text("Uzbekistan", session.get('language', 'tr')) }}</option>
+                <option value="VU">{{ translate_text("Vanuatu", session.get('language', 'tr')) }}</option>
+                <option value="VA">{{ translate_text("Vatican City", session.get('language', 'tr')) }}</option>
+                <option value="VE">{{ translate_text("Venezuela", session.get('language', 'tr')) }}</option>
+                <option value="VN">{{ translate_text("Vietnam", session.get('language', 'tr')) }}</option>
+                <option value="YE">{{ translate_text("Yemen", session.get('language', 'tr')) }}</option>
+                <option value="ZM">{{ translate_text("Zambia", session.get('language', 'tr')) }}</option>
+                <option value="ZW">{{ translate_text("Zimbabwe", session.get('language', 'tr')) }}</option>
+            </select>
+            
+            <input type="text" name="city" placeholder="{{ translate_text('City', session.get('language', 'tr')) }}" required>
+            <input type="date" name="date" required>
+            <input type="time" name="time" required>
+            <input type="number" name="temperature" placeholder="{{ translate_text('Temperature (°C)', session.get('language', 'tr')) }}" required>
+            <input type="number" name="humidity" placeholder="{{ translate_text('Humidity (%)', session.get('language', 'tr')) }}" required>
+            <input type="number" name="oran" placeholder="{{ translate_text('CO2 Ratio (%)', session.get('language', 'tr')) }}" required>
+            <button type="submit">{{ translate_text('Submit', session.get('language', 'tr')) }}</button>
+        </form>
+
+        <!-- Data Table -->
+   <!----    <table>
+            <thead>
+                <tr>
+                    <th>{{ translate_text("Country", session.get('language', 'tr')) }}</th>
+                    <th>{{ translate_text("City", session.get('language', 'tr')) }}</th>
+                    <th>{{ translate_text("Date", session.get('language', 'tr')) }}</th>
+                    <th>{{ translate_text("Time", session.get('language', 'tr')) }}</th>
+                    <th>{{ translate_text("Temperature (°C)", session.get('language', 'tr')) }}</th>
+                    <th>{{ translate_text("Humidity (%)", session.get('language', 'tr')) }}</th>
+                    <th>{{ translate_text("CO2 Ratio (%)", session.get('language', 'tr')) }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in climate_data %}
+                <tr>
+                    <td>{{ entry.country }}</td>
+                    <td>{{ entry.city }}</td>
+                    <td>{{ entry.date }}</td>
+                    <td>{{ entry.time }}</td>
+                    <td>{{ entry.temperature }}</td>
+                    <td>{{ entry.humidity }}</td>
+                    <td>{{ entry.oran }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7">{{ translate_text("No data available.", session.get('language', 'tr')) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>-->
+
+    <script>
+        function changeLanguage() {
+            const language = document.getElementById("language").value;
+            window.location.href = `/lang?language=${language}`;
+        }
+    </script>
+
+</body>
+</html>

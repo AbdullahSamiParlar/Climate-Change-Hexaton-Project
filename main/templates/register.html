@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ translate_text("Register", session.get('language', 'tr')) }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Global Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #e0f7fa 0%, #e0ece4 100%);
+            color: #2e3d49;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%;
+            background-color: #2e3d49;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: #e0f7fa;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #80cbc4;
+        }
+
+        .navbar select {
+            padding: 8px 12px;
+            border: none;
+            background-color: #344955;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* Main Container */
+        .form-container {
+            width: 90%;
+            max-width: 500px;
+            margin-top: 80px; /* Ensure space below navbar */
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-weight: 500;
+            color: #344955;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Form Styling */
+        form {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column layout */
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        form input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #b0bec5;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        form input:focus {
+            border-color: #80cbc4;
+            outline: none;
+        }
+
+        form button {
+            padding: 12px;
+            background-color: #4caf50; /* New button background color */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        /* Prompt for login */
+        .login-prompt {
+        text-align: center;  /* Center the text */
+        margin-top: 20px;  /* Space above the prompt */
+        font-size: 16px;  /* Consistent font size */
+        color: #344955;  /* Darker color for better readability */
+        }
+
+/* Login link styling */
+        .login-link {
+            display: inline-block;  /* Allow padding around the link */
+            margin-top: 5px;  /* Space above the link */
+            color: #007bff;  /* Button color */
+            text-decoration: none;  /* Remove underline */
+            font-weight: 500;  /* Slightly bolder text */
+            transition: color 0.3s;  /* Smooth color transition */
+        }
+
+        .login-link:hover {
+            color: #0056b3;  /* Darker shade on hover */
+            text-decoration: underline;  /* Underline on hover */
+        }
+
+        form button:hover {
+            background-color: #388e3c; /* Darker shade on hover */
+        }
+
+        /* Error Message */
+        .error {
+            color: #d9534f; /* Error text color */
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        a {
+            color: #007bff; /* Link color */
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-container {
+                width: 90%; /* Full width on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div>
+            <a href="/app">{{ translate_text("Climate Application", session.get('language', 'tr')) }}</a>
+            <a href="/help">{{ translate_text("About", session.get('language', 'tr')) }}</a>
+            <a href="/">{{ translate_text("Add Data", session.get('language', 'tr')) }}</a>
+            <a href="/c">{{ translate_text("Climate Change", session.get('language', 'tr')) }}</a>
+            <a href="/ai">{{ translate_text("Ask AI", session.get('language', 'tr')) }}</a>
+            <a href="/login">{{ translate_text("Login", session.get('language', 'tr')) }}</a>
+            <a href="/register">{{ translate_text("Register", session.get('language', 'tr')) }}</a>
+        </div>
+        <select name="language" id="language" onchange="changeLanguage()">
+            <option value="en" {% if session.get('language') == 'en' %}selected{% endif %}>English</option>
+            <option value="tr" {% if session.get('language') == 'tr' %}selected{% endif %}>Türkçe</option>
+            <option value="de" {% if session.get('language') == 'de' %}selected{% endif %}>Deutsch</option>
+            <option value="fr" {% if session.get('language') == 'fr' %}selected{% endif %}>Français</option>
+        </select>
+    </nav>
+
+    <div class="form-container">
+        <h1>{{ translate_text("Register", session.get('language', 'tr')) }}</h1>
+
+        <script>
+            function changeLanguage() {
+                const language = document.getElementById("language").value;
+                window.location.href = `/lang?language=${language}`;
+            }
+        </script>
+
+        {% if username_error %}
+            <p class="error">{{ username_error }}</p>
+        {% endif %}
+        {% if email_error %}
+            <p class="error">{{ email_error }}</p>
+        {% endif %}
+        {% if password_error %}
+            <p class="error">{{ password_error }}</p>
+        {% endif %}
+
+        <form method="POST" action="/register">
+            <div class="form-group">
+                <input type="text" name="username" placeholder="{{ translate_text('Username', session.get('language', 'tr')) }}" required>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="{{ translate_text('Email', session.get('language', 'tr')) }}" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" placeholder="{{ translate_text('Password', session.get('language', 'tr')) }}" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="confirm_password" placeholder="{{ translate_text('Confirm Password', session.get('language', 'tr')) }}" required>
+            </div>
+            <button type="submit">{{ translate_text('Register', session.get('language', 'tr')) }}</button>
+        </form>
+
+        <p class="login-prompt">{{ translate_text("Already have an account? Login here.", session.get('language', 'tr')) }}</p>
+        <a class="login-link" href="/login">{{ translate_text("Login", session.get('language', 'tr')) }}</a>
+        
+    </div>
+</body>
+</html>
