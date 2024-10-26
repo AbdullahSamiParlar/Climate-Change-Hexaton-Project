@@ -16,4 +16,4 @@ Veri yüklemek veya oylamak için emailinizi kullanarak hesap açabilir, gönül
 ### BAĞLANTI:
 Fikirlerinizle projeyi geliştirmeme yardım etmek için bana ulaşabilirsiniz: parlarabdullahsami@gmail.com
 
-### ################################################################################################################################################################################################################ #####
+
